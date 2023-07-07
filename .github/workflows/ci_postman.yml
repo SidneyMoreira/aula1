@@ -1,0 +1,32 @@
+name: QaCoders
+
+#gatilho
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    
+#Build do meu SO
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+#Meu passo a passo
+    steps:
+      - uses: actions/checkout@v3
+#Instalação das dependencias
+      - name: Verificar a versao
+        run: newman --version && node --version
+      - name: Instalar as dependencias
+        run: sudo npm install -g newman-reporter-htmlextra
+#Executar os comandos
+      - name: Executar a collection
+        run: newman run ./Sigunp.postman_collection.json -e qa.postman_environment.json --reporters cli, -r htmlextra --reporter-htmlextra-export ./results/Report.html 
+#Fazer Upload do meu artefato
+      - name: salvar artefatos
+        uses: action/upload-artifact@v2
+        with:
+            name: report
+            path: ./results/Report.html
+    
