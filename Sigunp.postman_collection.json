@@ -1,0 +1,235 @@
+{
+	"info": {
+		"_postman_id": "917c95d9-3d6a-482d-94c1-92bdeb91a59d",
+		"name": "Sigunp",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23799089",
+		"_collection_link": "https://winter-moon-770299.postman.co/workspace/Squad-da-Rosane~498964e8-a41b-4509-afcb-5b97c6d6810b/collection/23799089-917c95d9-3d6a-482d-94c1-92bdeb91a59d?action=share&creator=23799089&source=collection_link"
+	},
+	"item": [
+		{
+			"name": "Cadastro e login com sucesso",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"function firstName(){\r",
+							"\r",
+							"    var firstName = [\"William\", \"Paulo\", \"João\", \"Pedro\"]; //É a lista de nomes\r",
+							"    var radomItem = firstName[Math.floor(Math.random() * firstName.length)] // Logica que seleciona um nome da lista de nomes\r",
+							"    return radomItem; //retorna o nome selecionado da lista de nomes\r",
+							"}\r",
+							"\r",
+							"pm.environment.set(\"FirstName\", firstName()); // grava o iten da lista na variavel de ambiente\r",
+							"\r",
+							"function lastName(){\r",
+							"    var lastName = [\"Alves Pereira\", \"Lima Santos\", \"Souza Silva\"];\r",
+							"    var radomItem = lastName[Math.floor(Math.random() * lastName.length)]\r",
+							"    return radomItem;\r",
+							"}\r",
+							"\r",
+							"pm.environment.set(\"LastName\", lastName());\r",
+							"\r",
+							"pm.environment.set(\"FullName\", pm.variables.get(\"FirstName\") + \" \" + pm.variables.get(\"LastName\"));\r",
+							"\r",
+							"function domain(){\r",
+							"    var domain = [\"@gmail.com\", \"@hotmail.com\", \"@outlook.com\", \"@yahoo.com.br\", \"@terra.com.br\"];\r",
+							"    var radomItem = domain[Math.floor(Math.random() * domain.length)]\r",
+							"    return radomItem;\r",
+							"}\r",
+							"\r",
+							"pm.environment.set(\"Domain\", domain());\r",
+							"\r",
+							"function mail(){\r",
+							"    var mail = pm.variables.replaceIn('{{$guid}}') + \"_\" + pm.variables.get(\"FirstName\") + pm.variables.get(\"Domain\");\r",
+							"    return mail;\r",
+							"}\r",
+							"\r",
+							"pm.environment.set(\"Mail\", mail());"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check fullName is true\", function () {\r",
+							"    pm.expect(pm.variables.get(\"FullName\")).to.eql(JSON.parse(responseBody).user.fullName)\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check mail is true\", function () {\r",
+							"    pm.expect(pm.variables.get(\"Mail\")).to.eql(JSON.parse(responseBody).user.mail);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check mail is true\", function () {\r",
+							"    pm.expect(\"admin\").to.eql(JSON.parse(responseBody).user.accessProfile);\r",
+							"});\r",
+							"\r",
+							"function tokenResult(){\r",
+							"    if (JSON.parse(responseBody).token !== null){\r",
+							"        var tokenResult = true\r",
+							"    }else{\r",
+							"        var tokenResult = false\r",
+							"    }\r",
+							"    return tokenResult\r",
+							"}\r",
+							"\r",
+							"pm.test(\"Check token is true\", function () {\r",
+							"    pm.expect(true).to.eql(tokenResult());\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"fullName\": \"{{FullName}}\",\r\n    \"mail\": \"{{Mail}}\",\r\n    \"password\": \"QaCoders123@\",\r\n    \"confirmPassword\": \"QaCoders123@\",\r\n    \"accessProfile\": \"admin\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/signup",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Campo fullName é obrigatório",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"function domain(){\r",
+							"    var domain = [\"@gmail.com\", \"@hotmail.com\", \"@outlook.com\", \"@yahoo.com.br\", \"@terra.com.br\"];\r",
+							"    var radomItem = domain[Math.floor(Math.random() * domain.length)]\r",
+							"    return radomItem;\r",
+							"}\r",
+							"\r",
+							"pm.environment.set(\"Domain\", domain());\r",
+							"\r",
+							"function mail(){\r",
+							"    var mail = pm.variables.replaceIn('{{$guid}}') + \"_\" + pm.variables.get(\"FirstName\") + pm.variables.get(\"Domain\");\r",
+							"    return mail;\r",
+							"}\r",
+							"\r",
+							"pm.environment.set(\"Mail\", mail());\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check message fullName is false\", function () {\r",
+							"    pm.expect(pm.globals.get(\"MessageFullName\")).to.eql(JSON.parse(responseBody).errors[0])\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"fullName\": \"\",\r\n    \"mail\": \"{{Mail}}\",\r\n    \"password\": \"{{Password}}\",\r\n    \"confirmPassword\": \"{{Password}}\",\r\n    \"accessProfile\": \"admin\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/signup",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let jsonData = pm.response.json()\r",
+							"\r",
+							"pm.environment.set(\"Token\", jsonData.token)\r",
+							"\r",
+							"pm.test(\"Id Company is Equal?\", function () {\r",
+							"    pm.expect(jsonData.user.audit[0].idCompany).to.eql(\"Qa-Coders\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{Token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"mail\":\"guilherme@teste.com.br\",\r\n  \"password\": \"QaCoders123@\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/login",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
