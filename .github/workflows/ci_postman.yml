@@ -14,7 +14,7 @@ jobs:
     
 #Meu passo a passo
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 #Instalação das dependencias
       - name: Verificar a versao
         run: |
